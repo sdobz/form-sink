@@ -13,26 +13,35 @@
           inherit system;
         };
 
-        form-sink-bin = pkgs.runCommand "form-sink"
-          {
-            nativeBuildInputs = [ pkgs.deno ];
-          }
-          ''
-            mkdir -p $out/bin work
-            cp -r ${./.}/src work/
-            cp ${./.}/deno.json work/
-            cp ${./.}/deno.lock work/
+        form-sink-bin = pkgs.stdenv.mkDerivation {
+          name = "form-sink";
+          src = ./.;
 
-            cd work
-            deno compile \
-              --lock deno.lock \
-              --output $out/bin/form-sink \
-              --allow-net \
-              --allow-read \
-              --allow-env \
-              --allow-write \
-              src/main.ts
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+          buildInputs    = [ pkgs.deno ];
+
+          dontBuild = true;
+          installPhase = ''
+            mkdir -p $out/bin
+            cp -r src vendor deno.json deno.lock $out/
+
+            cat > $out/bin/form-sink <<WRAPPER
+            #!/usr/bin/env bash
+            set -euo pipefail
+            exec deno run \\
+              --allow-net \\
+              --allow-read \\
+              --allow-env \\
+              --allow-write \\
+              --vendor \\
+              --lock=${toString ./.}/deno.lock \\
+              ${toString ./.}/src/main.ts "$@"
+            WRAPPER
+
+            chmod +x $out/bin/form-sink
+            wrapProgram $out/bin/form-sink --prefix PATH : "${pkgs.bash}/bin" --prefix PATH : "${pkgs.deno}/bin"
           '';
+        };
 
       in {
         packages.default = form-sink-bin;
@@ -40,6 +49,7 @@
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
             deno
+            jq
           ];
         };
       }
