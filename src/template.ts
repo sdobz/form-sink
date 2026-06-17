@@ -3,8 +3,10 @@
  *
  * Each form has a subdirectory under the templates directory containing:
  * - meta.json — metadata (email field, subjects)
- * - admin.txt — body template for the admin notification
- * - confirm.txt — body template for the submitter confirmation
+ * - admin.txt — plaintext body template for the admin notification
+ * - confirm.txt — plaintext body template for the submitter confirmation
+ * - admin.html — HTML body template for the admin notification
+ * - confirm.html — HTML body template for the submitter confirmation
  */
 
 /** Metadata loaded from a form's meta.json file. */
@@ -14,6 +16,8 @@ export interface TemplateMeta {
   subjectConfirm: string;
   adminBody: string;
   confirmBody: string;
+  adminBodyHtml: string;
+  confirmBodyHtml: string;
 }
 
 /** Minimal shape needed from a submission for template interpolation. */
@@ -78,6 +82,8 @@ export function loadTemplate(
   // Load body templates
   const adminBody = Deno.readTextFileSync(`${templateDir}/admin.txt`);
   const confirmBody = Deno.readTextFileSync(`${templateDir}/confirm.txt`);
+  const adminBodyHtml = Deno.readTextFileSync(`${templateDir}/admin.html`);
+  const confirmBodyHtml = Deno.readTextFileSync(`${templateDir}/confirm.html`);
 
   return {
     emailField: meta.emailField,
@@ -85,6 +91,8 @@ export function loadTemplate(
     subjectConfirm: meta.subjectConfirm,
     adminBody,
     confirmBody,
+    adminBodyHtml,
+    confirmBodyHtml,
   };
 }
 
@@ -132,6 +140,11 @@ export function interpolate(
 // Convenience
 // ---------------------------------------------------------------------------
 
+export interface EmailBody {
+  text: string;
+  html?: string;
+}
+
 /**
  * Load a template and produce ready-to-send email objects for both admin
  * and submitter confirmation.
@@ -146,20 +159,46 @@ export function prepareEmails(
   formId: string,
   submission: SubmissionLike & { fields: Record<string, string> },
 ): {
-  adminEmail: { to?: string; subject: string; body: string };
-  confirmEmail?: { to: string; subject: string; body: string };
+  adminEmail: { to?: string; subject: string; body: EmailBody };
+  confirmEmail?: { to: string; subject: string; body: EmailBody };
 } {
   const template = loadTemplate(formId, templateDirPath);
 
-  const adminEmail: { to?: string; subject: string; body: string } = {
+  const adminBody: EmailBody = {
+    text: interpolate(
+      template.adminBody,
+      submission.fields,
+      submission,
+    ),
+    html: interpolate(
+      template.adminBodyHtml,
+      submission.fields,
+      submission,
+    ),
+  };
+
+  const adminEmail: { to?: string; subject: string; body: EmailBody } = {
     subject: interpolate(template.subjectAdmin, submission.fields, submission),
-    body: interpolate(template.adminBody, submission.fields, submission),
+    body: adminBody,
   };
 
   const result: ReturnType<typeof prepareEmails> = { adminEmail };
 
   const emailValue = submission.fields[template.emailField];
   if (emailValue && emailValue.trim() !== "") {
+    const confirmBody: EmailBody = {
+      text: interpolate(
+        template.confirmBody,
+        submission.fields,
+        submission,
+      ),
+      html: interpolate(
+        template.confirmBodyHtml,
+        submission.fields,
+        submission,
+      ),
+    };
+
     result.confirmEmail = {
       to: emailValue,
       subject: interpolate(
@@ -167,7 +206,7 @@ export function prepareEmails(
         submission.fields,
         submission,
       ),
-      body: interpolate(template.confirmBody, submission.fields, submission),
+      body: confirmBody,
     };
   }
 

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Submission Received</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        max-width: 600px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        color: #1a1a1a;
+        line-height: 1.5;
+      }
+      h1 {
+        margin-top: 0;
+        color: #16a34a;
+      }
+      .meta {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      th {
+        color: #666;
+        font-weight: 500;
+        width: 30%;
+      }
+      .footer {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e5e7eb;
+        color: #666;
+        font-size: 0.85rem;
+      }
+      .footer a {
+        color: #2563eb;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Thank you for your submission!</h1>
+    <p class="meta">
+      Form: {{ form_id }} &middot; Submitted at: {{ submitted_at }}
+    </p>
+
+    <table>
+      <tr>
+        <th>Name</th>
+        <td>{{ name }}</td>
+      </tr>
+      <tr>
+        <th>Email</th>
+        <td>{{ email }}</td>
+      </tr>
+    </table>
+
+    <div class="footer">
+      If you have any questions, please contact us at
+      <a href="mailto:admin@example.com">admin@example.com</a>.
+    </div>
+  </body>
+</html>
