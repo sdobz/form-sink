@@ -8,31 +8,31 @@
  * Returns `true` when Cloudflare reports `success: true`, `false` otherwise.
  */
 export async function verifyTurnstile(
-	secret: string,
-	response: string,
-	remoteip?: string,
+  secret: string,
+  response: string,
+  remoteip?: string,
 ): Promise<boolean> {
-	const params = new URLSearchParams({
-		secret,
-		response,
-	});
-	if (remoteip) {
-		params.set("remoteip", remoteip);
-	}
+  const params = new URLSearchParams({
+    secret,
+    response,
+  });
+  if (remoteip) {
+    params.set("remoteip", remoteip);
+  }
 
-	const res = await fetch(
-		"https://challenges.cloudflare.com/turnstile/v0/siteverify",
-		{
-			method: "POST",
-			headers: {
-				"Content-Type": "application/x-www-form-urlencoded",
-			},
-			body: params,
-		},
-	);
+  const res = await fetch(
+    "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params,
+    },
+  );
 
-	if (!res.ok) return false;
+  if (!res.ok) return false;
 
-	const body = (await res.json()) as Record<string, unknown>;
-	return body.success === true;
+  const body = (await res.json()) as Record<string, unknown>;
+  return body.success === true;
 }

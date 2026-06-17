@@ -11,15 +11,15 @@ import { getSubmission } from "../db.ts";
  * @param submissionToken - UUID token extracted from the URL path
  */
 export function handleGetSubmission(submissionToken: string): Response {
-	const submission = getSubmission(submissionToken);
+  const submission = getSubmission(submissionToken);
 
-	if (!submission) {
-		return Response.json({ error: "not found" }, { status: 404 });
-	}
+  if (!submission) {
+    return Response.json({ error: "not found" }, { status: 404 });
+  }
 
-	return Response.json({
-		form_id: submission.form_id,
-		fields: submission.fields,
-		submitted_at: submission.submitted_at,
-	});
+  return Response.json({
+    form_id: submission.form_id,
+    fields: submission.fields,
+    submitted_at: submission.submitted_at,
+  });
 }

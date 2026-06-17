@@ -20,7 +20,8 @@ A sequence of discrete operations for a local LLM to execute in order.
 
 - [x] Load config
 
-Read all runtime config from environment variables. Export a single typed `Config` object.
+Read all runtime config from environment variables. Export a single typed
+`Config` object.
 
 Variables:
 
@@ -68,14 +69,16 @@ CREATE TABLE IF NOT EXISTS submissions (
 - Files expected:
   - `admin.txt` — email body sent to admin
   - `confirm.txt` — email body sent to submitter
-  - `meta.json` — `{ "emailField": "email", "subjectAdmin": "...", "subjectConfirm": "..." }`
+  - `meta.json` —
+    `{ "emailField": "email", "subjectAdmin": "...", "subjectConfirm": "..." }`
 - Interpolation: replace `{{ field_name }}` with the matching submitted value
 - Special variables available in all templates:
   - `{{ submission_token }}`
   - `{{ submitted_at }}`
   - `{{ form_id }}`
 - Return structured objects ready for `email.ts`
-- Throw a clear error if the template directory does not exist for the given `formId`
+- Throw a clear error if the template directory does not exist for the given
+  `formId`
 
 ---
 
@@ -112,15 +115,19 @@ Handles `POST /submit`.
 
 Steps in order:
 
-1. Check `Origin` header against `ALLOWED_ORIGINS`; reject with 403 if not matched
-2. Parse body as `application/x-www-form-urlencoded` or `multipart/form-data` (fields only)
+1. Check `Origin` header against `ALLOWED_ORIGINS`; reject with 403 if not
+   matched
+2. Parse body as `application/x-www-form-urlencoded` or `multipart/form-data`
+   (fields only)
 3. Extract hidden field `_form_id`; reject with 400 if missing
-4. Extract `cf-turnstile-response`; call Turnstile verify; reject with 403 if invalid
+4. Extract `cf-turnstile-response`; call Turnstile verify; reject with 403 if
+   invalid
 5. Generate UUID token (`crypto.randomUUID()`)
 6. Insert submission into SQLite
 7. Load template for `_form_id`; interpolate fields
 8. Send admin notification email to `ADMIN_EMAIL`
-9. Send confirmation email to `fields[meta.emailField]` (skip silently if field absent)
+9. Send confirmation email to `fields[meta.emailField]` (skip silently if field
+   absent)
 10. Respond with `303 Location: $REDIRECT_URL`
 
 ---
@@ -181,10 +188,12 @@ turnstile.secretFile  # path
 
 - Creates systemd service `form-sink`
 - Runs as dedicated user/group `form-sink`
-- Sets `EnvironmentFile` from secrets files for `SMTP_PASS` and `TURNSTILE_SECRET`
+- Sets `EnvironmentFile` from secrets files for `SMTP_PASS` and
+  `TURNSTILE_SECRET`
 - Sets all other vars via `Environment=`
 - `StateDirectory = "form-sink"` (creates and owns `dataDir`)
-- `ExecStart` runs the Deno binary with `--allow-net --allow-read --allow-env --allow-write=$DATA_DIR`
+- `ExecStart` runs the Deno binary with
+  `--allow-net --allow-read --allow-env --allow-write=$DATA_DIR`
 
 ---
 
@@ -219,4 +228,5 @@ Cover:
 - All module options (table)
 - How to write a template
 - How to embed the form on a static site (minimal HTML snippet)
-- How Turnstile setup works (site key goes in the HTML, secret key goes in NixOS config)
+- How Turnstile setup works (site key goes in the HTML, secret key goes in NixOS
+  config)
