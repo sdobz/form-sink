@@ -6,7 +6,7 @@ A sequence of discrete operations for a local LLM to execute in order.
 
 ## 1. Scaffold repo
 
-- [ ] Scaffold repo
+- [x] Scaffold repo
 
 - Create `deno.json` with tasks: `start`, `dev`, `fmt`, `lint`
 - Create `.gitignore`
@@ -18,7 +18,7 @@ A sequence of discrete operations for a local LLM to execute in order.
 
 ## 2. Config loader (`src/config.ts`)
 
-- [ ] Load config
+- [x] Load config
 
 Read all runtime config from environment variables. Export a single typed `Config` object.
 
@@ -37,7 +37,7 @@ Variables:
 
 ## 3. Database (`src/db.ts`)
 
-- [ ] Implement database
+- [x] Implement database
 
 - Open SQLite at `$DATA_DIR/form-sink.db`
 - Run migrations on startup (plain SQL strings, no migration library)
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS submissions (
 
 ## 4. Template loader (`src/template.ts`)
 
-- [ ] Implement template loader
+- [x] Implement template loader
 
 - Given a `formId`, load files from `$TEMPLATES_DIR/<formId>/`
 - Files expected:
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS submissions (
 
 ## 5. Turnstile verification (`src/turnstile.ts`)
 
-- [ ] Add turnstile verification
+- [x] Add turnstile verification
 
 - Accept the `cf-turnstile-response` field from the form body
 - POST to `https://challenges.cloudflare.com/turnstile/v0/siteverify` with:
@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS submissions (
 
 ## 6. Email sender (`src/email.ts`)
 
-- [ ] Implement email sender
+- [x] Implement email sender
 
 - Use `https://deno.land/x/denomailer` - see `main.ts`
 - Accept: `to`, `subject`, `body (plain text)`, and send via configured SMTP
