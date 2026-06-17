@@ -80,7 +80,6 @@ export function insertSubmission(
 		new Date().toISOString(),
 		ip ?? null,
 	);
-	stmt.free();
 }
 
 /**
@@ -108,8 +107,6 @@ export function getSubmission(submissionToken: string): Submission | null {
 		submitted_at,
 		ip,
 	}));
-
-	stmt.free();
 
 	return result.length > 0 ? result[0] : null;
 }

@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS submissions (
 
 ## 7. Submit route (`src/routes/submit.ts`)
 
-- [ ] Add submit route
+- [x] Add submit route
 
 Handles `POST /submit`.
 
@@ -127,7 +127,7 @@ Steps in order:
 
 ## 8. View route (`src/routes/view.ts`)
 
-- [ ] Add View route
+- [x] Add View route
 
 Handles `GET /submission/:token`.
 
@@ -143,7 +143,7 @@ No HTML rendering — JSON only.
 
 ## 9. HTTP server (`src/main.ts`)
 
-- [ ] Add http router
+- [x] Add http router
 
 - Use `Deno.serve` (stdlib)
 - Route table:
@@ -158,7 +158,7 @@ No HTML rendering — JSON only.
 
 ## 10. NixOS module (`nixos/module.nix`)
 
-- [ ] Add nixos module
+- [x] Add nixos module
 
 Define `options.services.form-sink`:
 

@@ -12,22 +12,37 @@
         pkgs = import nixpkgs {
           inherit system;
         };
-        src = ./.;
-      in {
-        packages.default = pkgs.writeShellApplication {
-          name = "form-sink";
-          runtimeInputs = [ pkgs.deno ];
-          text = ''
-            deno run --allow-net --allow-read --allow-env ${src}/main.ts
+
+        form-sink-bin = pkgs.runCommand "form-sink"
+          {
+            nativeBuildInputs = [ pkgs.deno ];
+            DENO_DIR = "$TMPDIR/deno-cache";
+          }
+          ''
+            mkdir -p $out/bin work
+            cp -r ${./.}/src work/
+            cp ${./.}/deno.json work/
+            cp ${./.}/deno.lock work/
+
+            cd work
+            deno compile \
+              --lock deno.lock \
+              --output $out/bin/form-sink \
+              --allow-net \
+              --allow-read \
+              --allow-env \
+              --allow-write \
+              src/main.ts
           '';
-        };
+
+      in {
+        packages.default = form-sink-bin;
 
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
             deno
           ];
         };
-        
       }
     ) // {
       nixosModules.default = import ./nixos/module.nix;
