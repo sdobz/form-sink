@@ -2,5 +2,5 @@
 .env
 *.db
 *.log
-node_modules/
 dist/
+result

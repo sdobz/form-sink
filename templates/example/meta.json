@@ -1,0 +1,5 @@
+{
+  "emailField": "email",
+  "subjectAdmin": "New submission on form {{ form_id }}",
+  "subjectConfirm": "Submission received — {{ form_id }}"
+}

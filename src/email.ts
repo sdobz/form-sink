@@ -1,4 +1,4 @@
-import mailer from '@neabyte/deno-mailer'
+import mailer from "@neabyte/deno-mailer";
 import { loadConfig } from "./config.ts";
 
 export async function sendEmail(

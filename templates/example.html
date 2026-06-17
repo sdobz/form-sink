@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Sink — Example</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        max-width: 640px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        color: #1a1a1a;
+        line-height: 1.5;
+      }
+      h1 {
+        margin-bottom: 0.25rem;
+      }
+      .subtitle {
+        color: #666;
+        margin-bottom: 2rem;
+      }
+      fieldset {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      legend {
+        font-weight: 600;
+        padding: 0 0.5rem;
+      }
+      label {
+        display: block;
+        font-weight: 500;
+        margin-top: 0.75rem;
+        margin-bottom: 0.25rem;
+      }
+      input[type="text"],
+      input[type="email"],
+      textarea,
+      select {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font: inherit;
+      }
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+      .actions {
+        margin-top: 1.5rem;
+      }
+      button[type="submit"] {
+        padding: 0.6rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+      }
+      button[type="submit"]:hover {
+        background: #1d4ed8;
+      }
+      #result {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        background: #f9fafb;
+        display: none;
+      }
+      #result h2 {
+        margin-top: 0;
+        font-size: 1.1rem;
+      }
+      #result .field {
+        margin-bottom: 0.5rem;
+      }
+      #result .field dt {
+        font-weight: 600;
+      }
+      #result .field dd {
+        margin-left: 0;
+      }
+      #result.error {
+        border-color: #fca5a5;
+        background: #fef2f2;
+      }
+      .token-hint {
+        margin-top: 1rem;
+        font-size: 0.85rem;
+        color: #666;
+      }
+      .token-hint code {
+        background: #f3f4f6;
+        padding: 0.1rem 0.3rem;
+        border-radius: 3px;
+      }
+      .cf-turnstile {
+        margin-top: 0.75rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Form Sink — Example Form</h1>
+    <p class="subtitle">
+      Fill this out and hit submit. Your data goes to SQLite and an email is
+      sent.
+    </p>
+
+    <!-- Submission result panel (shown when a #form-token hash is present) -->
+    <div id="result">
+      <h2>Submission Details</h2>
+      <dl id="result-fields"></dl>
+    </div>
+
+    <form action="/submit" method="POST" id="main-form">
+      <input type="hidden" name="_form_id" value="example" />
+
+      <fieldset>
+        <legend>Contact</legend>
+
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required />
+      </fieldset>
+
+      <fieldset>
+        <legend>Details</legend>
+
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" required />
+
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required></textarea>
+
+        <label for="priority">Priority</label>
+        <select id="priority" name="priority">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </fieldset>
+
+      <!--
+      Cloudflare Turnstile widget (optional — remove the div if you don't have a site key).
+      Replace "YOUR_SITE_KEY" with your actual Turnstile site key.
+    -->
+      <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY"></div>
+
+      <div class="actions">
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+
+    <p class="token-hint">
+      View a past submission by adding its token as a hash fragment:
+      <code>/example#form-token-abc123</code>
+    </p>
+
+    <!--
+    Turnstile script (uncomment and set your site key above to enable).
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  -->
+
+    <script>
+      (function () {
+        "use strict";
+
+        // If the URL contains a hash like #form-token-<uuid>, fetch and display that submission.
+        const hash = window.location.hash;
+        const tokenMatch = hash.match(/^#form-token-(.+)$/);
+        if (!tokenMatch) return;
+
+        const token = decodeURIComponent(tokenMatch[1]);
+        const resultEl = document.getElementById("result");
+        const fieldsEl = document.getElementById("result-fields");
+
+        fetch("/submission/" + encodeURIComponent(token))
+          .then(function (resp) {
+            if (!resp.ok) {
+              throw new Error(
+                "Submission not found (HTTP " + resp.status + ")",
+              );
+            }
+            return resp.json();
+          })
+          .then(function (data) {
+            // Build definition list from fields
+            var html = "";
+
+            // Metadata
+            html += '<div class="field"><dt>Form ID</dt><dd>' +
+              escapeHtml(data.form_id) +
+              "</dd></div>";
+            html += '<div class="field"><dt>Token</dt><dd>' +
+              escapeHtml(token) +
+              "</dd></div>";
+            html += '<div class="field"><dt>Submitted</dt><dd>' +
+              escapeHtml(new Date(data.submitted_at).toLocaleString()) +
+              "</dd></div>";
+
+            // User-submitted fields
+            var fields = data.fields;
+            for (var key in fields) {
+              if (Object.prototype.hasOwnProperty.call(fields, key)) {
+                html += '<div class="field"><dt>' +
+                  escapeHtml(key) +
+                  "</dt><dd>" +
+                  escapeHtml(String(fields[key])) +
+                  "</dd></div>";
+              }
+            }
+
+            fieldsEl.innerHTML = html;
+            resultEl.style.display = "block";
+
+            // Scroll result into view
+            resultEl.scrollIntoView({ behavior: "smooth" });
+          })
+          .catch(function (err) {
+            fieldsEl.innerHTML =
+              '<div class="field"><dd style="color:#b91c1c">' +
+              escapeHtml(err.message) +
+              "</dd></div>";
+            resultEl.classList.add("error");
+            resultEl.style.display = "block";
+          });
+
+        function escapeHtml(str) {
+          var div = document.createElement("div");
+          div.appendChild(document.createTextNode(str));
+          return div.innerHTML;
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -95,12 +95,21 @@ export function getSubmission(submissionToken: string): Submission | null {
      WHERE token = ?1`,
   );
   const rows = stmt.all<
-    [number, string, string, string, string, string | null]
+    {
+      id: number;
+      form_id: string;
+      token: string;
+      fields: string;
+      submitted_at: string;
+      ip: string;
+    }
   >(
     submissionToken,
   );
 
-  const result = rows.map(([id, form_id, token, fields, submitted_at, ip]) => ({
+  const result = rows.map((
+    { id, form_id, token, fields, submitted_at, ip },
+  ) => ({
     id,
     form_id,
     token,

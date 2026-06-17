@@ -199,7 +199,7 @@ turnstile.secretFile  # path
 
 ## 11. Nix package (`flake.nix` package output)
 
-- [ ] Add nix build to flake
+- [x] Add nix build to flake
 
 - Use `pkgs.buildDenvDerivation` or `pkgs.runCommand` + Deno's `deno compile`
 - Produce a single self-contained binary: `form-sink`

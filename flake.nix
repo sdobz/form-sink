@@ -12,12 +12,13 @@
         pkgs = import nixpkgs {
           inherit system;
         };
+        lib = pkgs.lib;
 
         form-sink-bin = pkgs.stdenv.mkDerivation {
           name = "form-sink";
           src = ./.;
 
-          nativeBuildInputs = [ pkgs.makeWrapper ];
+          nativeBuildInputs = [ ];
           buildInputs    = [ pkgs.deno ];
 
           dontBuild = true;
@@ -27,19 +28,20 @@
 
             cat > $out/bin/form-sink <<WRAPPER
             #!/usr/bin/env bash
+            export DENO_SQLITE_PATH="${lib.makeLibraryPath [ pkgs.sqlite ]}/libsqlite3${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
             set -euo pipefail
             exec deno run \\
               --allow-net \\
               --allow-read \\
               --allow-env \\
               --allow-write \\
+              --allow-ffi \\
               --vendor \\
               --lock=${toString ./.}/deno.lock \\
-              ${toString ./.}/src/main.ts "$@"
+              ${toString ./.}/src/main.ts "\$@"
             WRAPPER
 
             chmod +x $out/bin/form-sink
-            wrapProgram $out/bin/form-sink --prefix PATH : "${pkgs.bash}/bin" --prefix PATH : "${pkgs.deno}/bin"
           '';
         };
 
@@ -49,7 +51,7 @@
         devShells.default = pkgs.mkShell {
           packages = with pkgs; [
             deno
-            jq
+            sqlite
           ];
         };
       }

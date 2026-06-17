@@ -1,0 +1,12 @@
+Thank you for your submission!
+
+Form: {{ form_id }}
+Submitted at: {{ submitted_at }}
+
+--- your details ---
+{{ name }}
+{{ email }}
+
+--- end of details ---
+
+If you have any questions, please contact us at admin@example.com.

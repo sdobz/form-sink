@@ -1,0 +1,12 @@
+New form submission received.
+
+Form: {{ form_id }}
+Submitted at: {{ submitted_at }}
+
+--- submission fields ---
+{{ name }}
+{{ email }}
+
+--- end of submission ---
+
+Submission token: {{ submission_token }}

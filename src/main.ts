@@ -62,6 +62,16 @@ const server = Deno.serve({ port: config.port }, async (req: Request) => {
     res = await handlePostSubmit(req, config);
   } else if (method === "GET" && pathname === "/health") {
     res = Response.json({ ok: true });
+  } else if (method === "GET" && pathname === "/example") {
+    const htmlPath = config.templatesDir + "/example.html";
+    try {
+      const html = await Deno.readTextFile(htmlPath);
+      res = new Response(html, {
+        headers: { "Content-Type": "text/html; charset=utf-8" },
+      });
+    } catch {
+      res = new Response("Example template not found", { status: 500 });
+    }
   } else if (method === "GET") {
     const token = parseSubmissionPath(pathname);
     if (token) {

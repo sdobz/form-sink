@@ -1,6 +1,6 @@
 import type { Config } from "../config.ts";
 import { insertSubmission } from "../db.ts";
-import { prepareEmails } from "../template.ts";
+import { interpolate, prepareEmails } from "../template.ts";
 import { verifyTurnstile } from "../turnstile.ts";
 import { sendEmail } from "../email.ts";
 
@@ -25,7 +25,9 @@ export async function handlePostSubmit(
   // ---------------------------------------------------------------------------
   const origin = req.headers.get("Origin") ?? "";
   if (origin && !config.allowedOrigins.includes(origin)) {
-    return new Response("Forbidden: origin not allowed", { status: 403 });
+    return new Response(`Forbidden: origin ${origin} not allowed`, {
+      status: 403,
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -116,8 +118,13 @@ export async function handlePostSubmit(
   // ---------------------------------------------------------------------------
   // 7. Redirect
   // ---------------------------------------------------------------------------
+  const redirectLocation = interpolate(
+    config.redirectUrl,
+    fields,
+    submissionLike,
+  );
   return new Response(null, {
     status: 303,
-    headers: { Location: config.redirectUrl },
+    headers: { Location: redirectLocation },
   });
 }
