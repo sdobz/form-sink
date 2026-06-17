@@ -7,6 +7,8 @@
   },
   "imports": {
     "@db/sqlite": "jsr:@db/sqlite@^0.13.0",
+    "@neabyte/deno-mailer": "jsr:@neabyte/deno-mailer@^0.3.0",
     "@std/assert": "jsr:@std/assert@1"
-  }
+  },
+  "vendor": true
 }

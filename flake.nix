@@ -16,7 +16,6 @@
         form-sink-bin = pkgs.runCommand "form-sink"
           {
             nativeBuildInputs = [ pkgs.deno ];
-            DENO_DIR = "$TMPDIR/deno-cache";
           }
           ''
             mkdir -p $out/bin work

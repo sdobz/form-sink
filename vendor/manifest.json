@@ -1,0 +1,17 @@
+{
+  "modules": {
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/Types.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/smtp/Address.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/smtp/Auth.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/smtp/Calendar.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/smtp/Client.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/smtp/Command.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/smtp/Connection.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/smtp/Message.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/utils/Attachment.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/utils/Config.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/utils/Content.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/utils/Email.ts": {},
+    "https://jsr.io/@neabyte/deno-mailer/0.3.0/src/utils/SMTP.ts": {}
+  }
+}
