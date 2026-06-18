@@ -57,6 +57,11 @@ in {
         description = "SMTP authentication username.";
       };
 
+      from = mkOption {
+        type = types.str;
+        description = "SMTP authentication from address.";
+      };
+
       passwordFile = mkOption {
         type = types.path;
         description = "Path to a file containing the SMTP password (read at runtime).";
@@ -117,7 +122,7 @@ in {
           "SMTP_HOST=${cfg.smtp.host}"
           "SMTP_PORT=${toString cfg.smtp.port}"
           "SMTP_USER=${cfg.smtp.user}"
-          "SMTP_FROM=${cfg.adminEmail}"
+          "SMTP_FROM=${cfg.smtp.from}"
         ];
 
         ExecStart = "${cfg.package}/bin/form-sink";
