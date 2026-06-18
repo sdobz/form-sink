@@ -30,7 +30,7 @@
             #!/usr/bin/env bash
             export DENO_SQLITE_PATH="${lib.makeLibraryPath [ pkgs.sqlite ]}/libsqlite3${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}"
             set -euo pipefail
-            exec deno run \\
+            exec ${pkgs.deno}/bin/deno run \\
               --allow-net \\
               --allow-read \\
               --allow-env \\

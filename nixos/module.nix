@@ -112,7 +112,7 @@ in {
           "DATA_DIR=${cfg.dataDir}"
           "TEMPLATES_DIR=${toString cfg.templatesDir}"
           "ADMIN_EMAIL=${cfg.adminEmail}"
-          "REDIRECT_URL=${cfg.redirectUrl}"
+          "REDIRECT_URL=\"${cfg.redirectUrl}\""
           "ALLOWED_ORIGINS=${lib.concatStringsSep "," cfg.allowedOrigins}"
           "SMTP_HOST=${cfg.smtp.host}"
           "SMTP_PORT=${toString cfg.smtp.port}"
