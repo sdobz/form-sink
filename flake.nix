@@ -37,8 +37,8 @@
               --allow-write \\
               --allow-ffi \\
               --vendor \\
-              --lock=${toString ./.}/deno.lock \\
-              ${toString ./.}/src/main.ts "\$@"
+              --lock=$out/deno.lock \\
+              $out/src/main.ts "\$@"
             WRAPPER
 
             chmod +x $out/bin/form-sink
