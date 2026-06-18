@@ -14,12 +14,10 @@ initDb(config.dataDir);
 // ---------------------------------------------------------------------------
 
 /** Attach CORS headers to a response based on config.allowedOrigins. */
-function withCors(response: Response): Response {
-  if (config.allowedOrigins.length > 0) {
-    response.headers.set(
-      "Access-Control-Allow-Origin",
-      config.allowedOrigins[0],
-    );
+function withCors(req: Request, response: Response): Response {
+  const origin = req.headers.get("Origin");
+  if (origin && config.allowedOrigins.includes(origin)) {
+    response.headers.set("Access-Control-Allow-Origin", origin);
     response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     response.headers.set(
       "Access-Control-Allow-Headers",
@@ -84,7 +82,7 @@ const server = Deno.serve({ port: config.port }, async (req: Request) => {
   }
 
   // Apply CORS headers to every response
-  res = withCors(res);
+  res = withCors(req, res);
 
   // Log
   logRequest(method, pathname, res.status, Date.now() - start);
