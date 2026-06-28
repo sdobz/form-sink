@@ -62,7 +62,7 @@ export async function handlePostSubmit(
   // ---------------------------------------------------------------------------
   const turnstileResponse = fields["cf-turnstile-response"];
   if (
-    turnstileResponse &&
+    config.turnstileSecret &&
     !(await verifyTurnstile(
       config.turnstileSecret,
       turnstileResponse,
